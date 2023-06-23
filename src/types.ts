@@ -14,7 +14,7 @@ export type SwProps<T, V = object> = {
   sw?: SwStyle<T, V> | null;
   variants?:
     | {
-        [K in keyof V]: boolean;
+        [K in keyof V]: boolean | undefined | null;
       }
     | null;
 };

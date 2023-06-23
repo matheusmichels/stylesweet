@@ -1,21 +1,16 @@
-import { View } from "react-native";
-
+import { useState } from "react";
+import { TextInput } from "react-native";
 import { SwProvider, SwText, SwView, createStyleSweet } from "stylesweet";
 
 export default function App() {
+  const [text, setText] = useState("");
+
   return (
     <SwProvider>
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+      <SwView sw={styles.container}>
         <SwView
-          sw={styles.container}
+          sw={styles.card}
           variants={{
-            bordered: true,
             rounded: true,
           }}
         />
@@ -28,20 +23,31 @@ export default function App() {
         >
           Hello World
         </SwText>
-      </View>
+
+        <TextInput
+          value={text}
+          onChangeText={setText}
+          style={{ width: "100%", height: 40 }}
+        />
+      </SwView>
     </SwProvider>
   );
 }
 
 const styles = createStyleSweet({
   container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  card: {
     backgroundColor: "blue",
     width: [100, 300, 500],
     height: [100, 300, 500],
 
     variants: {
       rounded: {
-        borderRadius: 24,
+        borderRadius: 50,
       },
       bordered: {
         borderWidth: 2,

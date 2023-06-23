@@ -1,7 +1,8 @@
-import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from "react-native";
+import { ImageStyle, TextStyle, ViewStyle } from "react-native";
 import { SwBreakpoint, SwProps } from "./types";
 import { useMemo, useRef } from "react";
 import { useBreakpoint } from "./store";
+import isEqual from "react-fast-compare";
 
 function flattenStyles(styles: any, breakpoint: SwBreakpoint) {
   const breakpointIndex = breakpoint === "S" ? 0 : breakpoint === "M" ? 1 : 2;
@@ -19,14 +20,32 @@ function flattenStyles(styles: any, breakpoint: SwBreakpoint) {
 export function useParsedStyleSweet<
   V extends ViewStyle | TextStyle | ImageStyle,
   T extends SwProps<V>
->({ sw, variants }: T): V {
+>(config: T): V {
   const breakpoint = useBreakpoint();
 
-  const styles = useMemo(() => {
-    const swStylesVariants = sw?.variants;
-    delete sw?.variants;
+  const previousConfig = useRef<T>();
+  const previousBreakpoint = useRef<SwBreakpoint>();
+  const previousStyles = useRef<V>();
 
-    let newStyles = flattenStyles(sw ?? {}, breakpoint);
+  const styles = useMemo(() => {
+    if (
+      isEqual(previousConfig.current, config) &&
+      previousBreakpoint.current === breakpoint &&
+      previousStyles.current
+    ) {
+      return previousStyles.current;
+    }
+
+    previousConfig.current = config;
+    previousBreakpoint.current = breakpoint;
+
+    const { sw, variants } = config;
+
+    const swStylesVariants = sw?.variants;
+    const styles = { ...sw };
+    delete styles.variants;
+
+    let newStyles = flattenStyles(styles ?? {}, breakpoint);
 
     if (variants) {
       const newVariantStyles = Object.entries(variants).reduce(
@@ -50,8 +69,9 @@ export function useParsedStyleSweet<
       };
     }
 
-    return newStyles;
-  }, [sw, variants]);
+    previousStyles.current = newStyles as V;
+    return previousStyles.current;
+  }, [config, breakpoint]);
 
-  return styles as V;
+  return styles;
 }
