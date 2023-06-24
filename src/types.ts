@@ -1,10 +1,6 @@
-import { ViewProps } from "react-native";
-
-export type SwResponsiveStyle<T> = {
+export type SwBaseStyle<T> = {
   [K in keyof T]: T[K] | [T[K]] | [T[K], T[K]] | [T[K], T[K], T[K]];
 };
-
-export type SwBaseStyle<T> = SwResponsiveStyle<T>;
 
 export type SwStyle<T, V = object> = SwBaseStyle<T> & {
   variants?: Record<keyof V, SwBaseStyle<T>>;
