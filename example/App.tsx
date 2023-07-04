@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "react-native";
 import { SwProvider, SwText, SwView, createStyleSweet } from "stylesweet";
+import { MMButton } from "./src/components/MMButton";
 
 export default function App() {
   const [textVisible, setTextVisible] = useState(false);
@@ -14,6 +15,8 @@ export default function App() {
           title="Toggle visibility"
           onPress={() => setTextVisible((previous) => !previous)}
         />
+
+        <MMButton variants={textVisible ? "primary" : "secondary"} />
 
         <SwText sw={styles.text} variants={{ visible: textVisible }}>
           Hello World
