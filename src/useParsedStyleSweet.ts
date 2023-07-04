@@ -48,15 +48,23 @@ export function useParsedStyleSweet<
     let newStyles = flattenStyles(styles ?? {}, breakpoint);
 
     if (variants) {
-      const newVariantStyles = Object.entries(variants).reduce(
-        (current, [key, value]) => {
-          return {
-            ...current,
-            ...(!!value ? swStylesVariants?.[key] : {}),
-          };
-        },
-        {}
-      );
+      let keys: string[] = [];
+      if (typeof variants === "string") {
+        keys = [variants];
+      } else if (Array.isArray(variants)) {
+        keys = variants.filter((variant) => typeof variant === "string");
+      } else {
+        keys = Object.entries(variants)
+          .filter(([_, value]) => !!value)
+          .map(([key]) => key);
+      }
+
+      const newVariantStyles = keys.reduce((current, key) => {
+        return {
+          ...current,
+          ...swStylesVariants?.[key],
+        };
+      }, {});
 
       const flattenedVariantStyles = flattenStyles(
         newVariantStyles,

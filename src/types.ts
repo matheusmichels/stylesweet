@@ -12,6 +12,8 @@ export type SwProps<T, V = object> = {
     | {
         [K in keyof V]: boolean | undefined | null;
       }
+    | (keyof V & {})
+    | Array<keyof V | undefined | null>
     | null;
 };
 
